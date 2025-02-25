@@ -31,7 +31,7 @@ const ForgotPasswordPage = () => {
                 navigate('/setNewPassword');
             }
         } catch (error) {
-            setMessage(error.response.data.message || 'An error occurred');
+            setMessage(error.response.data?.message || 'An error occurred');
         }
     };
 
