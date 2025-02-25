@@ -46,4 +46,6 @@ export const FETCH_CURRENT_QUESTION = `${BASE_URL}/player/getCurrentQuestion`
 export const GET_GAME_DETAILS = `${BASE_URL}/player/fetchGameDetails`;
 export const SUBMIT_CODE = `${BASE_URL}/player/submitQuestionCode`;
 export const FETCH_LEADERBOARD = `${BASE_URL}/player/fetchLeaderBoard`;
+export const INTITATE_FORGOT_PASSWORD = `${BASE_URL}/player/intiateForgotPassword`;
+export const SET_NEW_PASSWORD = `${BASE_URL}/player/setNewPassword`;
 
