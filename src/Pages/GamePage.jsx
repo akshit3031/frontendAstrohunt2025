@@ -181,7 +181,7 @@ export default function GamePage() {
                           className="bg-white/5 p-4 rounded-lg"
                         >
                           <p className="text-purple-300">
-                            {`${index + 1}. ${hint}`}
+                            {`${index + 1}. ${hint.text}`}
                           </p>
                         </div>
                       ))}
