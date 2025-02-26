@@ -17,8 +17,6 @@ const ModifyQuestion = () => {
   const [hintsList, setHintsList] = useState(
     questionData?.hints?.map(hint => typeof hint === 'object' ? hint.text : hint) || []
   );
-  const [image, setImage] = useState(null);
-  const [isImageUpdated, setIsImageUpdated] = useState(false);
 
   // Initialize state with existing question data
   const [formData, setFormData] = useState({
@@ -36,41 +34,26 @@ const ModifyQuestion = () => {
     }));
   };
 
-  const handleImageChange = (e) => {
-    if (e.target.files[0]) {
-      setImage(e.target.files[0]);
-      setIsImageUpdated(true);
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const formDataToSend = new FormData();
-      formDataToSend.append("levelNum", formData.levelNum);
-      formDataToSend.append("title", formData.title);
-      formDataToSend.append("description", formData.description);
-      formDataToSend.append("correctCode", formData.correctCode);
-      formDataToSend.append("hints", JSON.stringify(hintsList));
-      formDataToSend.append("isImageUpdated", isImageUpdated);
+      const payload = {
+        levelNum: formData.levelNum,
+        title: formData.title,
+        description: formData.description,
+        correctCode: formData.correctCode,
+        hints:JSON.stringify(hintsList),
+      };
 
-      if (isImageUpdated && image) {
-        formDataToSend.append("image", image);
-      }
-
-      // Log FormData entries
-      console.log("Form Data To Send:");
-      for (let pair of formDataToSend.entries()) {
-        console.log(pair[0] + ': ' + pair[1]);
-      }
+      console.log("Payload to Send:", payload);
 
       const response = await axios.post(
         MODIFY_QUESTION(questionData.id),
-        formDataToSend,
+        payload,
         {
           withCredentials: true,
           headers: {
-            'Content-Type': 'multipart/form-data',
+            'Content-Type': 'application/json',
           },
         }
       );
@@ -157,47 +140,7 @@ const ModifyQuestion = () => {
               />
             </div>
 
-            {/* Add Image field before the hints section */}
-            <div className="flex flex-col">
-              <label className="text-white text-sm mb-1">Update Image</label>
-              <div className="space-y-2">
-                {questionData?.image && !isImageUpdated && (
-                  <div className="mb-2">
-                    <p className="text-white text-sm mb-1">Current Image:</p>
-                    <img
-                      src={`http://localhost:3000/${questionData.image}`}
-                      alt="Current"
-                      className="w-40 h-40 object-cover rounded-lg"
-                    />
-                  </div>
-                )}
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="w-full px-3 sm:px-4 py-2 bg-white/20 border border-gray-300/30 rounded-lg text-white 
-                  file:mr-4 file:py-2 file:px-4 
-                  file:rounded-lg file:border-0 
-                  file:text-sm file:font-semibold
-                  file:text-white file:bg-blue-600 
-                  file:hover:bg-blue-700 
-                  file:cursor-pointer"
-                />
-                {image && (
-                  <div className="mt-2">
-                    <p className="text-white text-sm mb-1">New Image Preview:</p>
-                    <img
-                      src={URL.createObjectURL(image)}
-                      alt="Preview"
-                      className="w-40 h-40 object-cover rounded-lg"
-                    />
-                  </div>
-                )}
-              </div>
-            </div>
-
             {/* Hints */}
-            {/* Updated Hints Section */}
             <div className="flex flex-col">
               <label className="text-white text-sm mb-1">Hints</label>
               <div className="space-y-2">

@@ -216,12 +216,12 @@ export default function LevelQuestions() {
                                     </div>
                                 </div>
                                 <div className="flex space-x-2">
-                                    {/* <button
+                                    <button
                                         className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
                                         onClick={() => handleModify(question)}
                                     >
                                         Modify
-                                    </button> */}
+                                    </button>
                                     <button
                                         className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg"
                                         onClick={() => handleDelete(question.id)}
