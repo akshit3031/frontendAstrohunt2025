@@ -55,7 +55,9 @@ export default function LoginPage() {
             <div className="flex justify-center mb-8">
               <Rocket className="w-12 h-12 text-purple-500" />
             </div>
-            <h1 className="text-3xl font-bold text-center mb-8 text-white">Login to Space Quest</h1>
+            <h1 className="text-3xl font-bold text-center mb-8 text-white">AstroHunt</h1>
+
+         
             <form onSubmit={handleLogin} className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-white">
@@ -100,7 +102,7 @@ export default function LoginPage() {
               </Button>
             </form>
             <div className="mt-6 text-center">
-              <Link to="/forgot-password" className="text-sm text-purple-400 hover:text-purple-300">
+            <Link to="/forgotPassword" className="text-sm text-purple-400 hover:text-purple-300">
                 Forgot password?
               </Link>
             </div>

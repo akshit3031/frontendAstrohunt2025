@@ -172,22 +172,41 @@ export default function GamePage() {
 
                 {/* Hints Section */}
                 {hints.length > 0 && (
-                  <div className="space-y-3">
-                    <h3 className="text-lg font-semibold text-white">Hints:</h3>
-                    <div className="space-y-2">
-                      {hints.map((hint, index) => (
-                        <div
-                          key={index}
-                          className="bg-white/5 p-4 rounded-lg"
-                        >
-                          <p className="text-purple-300">
-                            {`${index + 1}. ${hint}`}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
+  <div className="space-y-3">
+    <h3 className="text-lg font-semibold text-white">Hints:</h3>
+    <div className="space-y-2">
+      {hints.map((hint, index) => {
+        // Regex to check if hint.text is a URL
+        const isUrl = /^https?:\/\/[^\s]+$/.test(hint.text);
+
+        return (
+          <div
+            key={index}
+            className="bg-white/5 p-4 rounded-lg break-words overflow-hidden"
+          >
+            {isUrl ? (
+              <a
+                href={hint.text}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-400 underline break-words"
+              >
+                {`${index + 1}. `}
+                <span className="inline-block max-w-[90%] truncate">
+                  {hint.text}
+                </span>
+              </a>
+            ) : (
+              <p className="text-purple-300 break-words">
+                {`${index + 1}. ${hint.text}`}
+              </p>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  </div>
+)}
 
                 {/* Answer Form */}
                 {user.role === 'team_leader' && (

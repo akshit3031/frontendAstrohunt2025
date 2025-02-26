@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import SpaceBackground from '../components/space-background';
 import axios from 'axios';
-import { GET_ALL_LEVELS, } from '../constants';
+import { GET_ALL_LEVELS,ADD_LEVEL } from '../constants';
 import { useNavigate } from 'react-router-dom';
 
 export default function Levels() {
@@ -49,8 +49,36 @@ export default function Levels() {
 
     };
 
+     // add levels
+     const addNewLevel =async ()=>{
+        const maxLevel = levels.length > 0 ? Math.max(...levels.map(l => l.id)) : 0;
+        console.log(`max level ${maxLevel}`);
+        const newLevel = maxLevel+1;
+        try{
+            const response = await axios.post(ADD_LEVEL,{level:newLevel},{
+                withCredentials:true,
+                headers:{ 'Content-Type': 'application/json' }
+            });
+            if(response.status===201){
+                setLevels([]);
+                fetchLevels();
+            }
+        }catch(error){
+            console.error('Error:', error.response?.data || error.message);
+        }
+    }
+
     return (
         <div className="container mx-auto p-4">
+              <div className="flex justify-between items-center mb-4">
+                <h1 className="text-white text-2xl font-bold">Levels</h1>
+                <button
+                    onClick={addNewLevel}
+                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg"
+                >
+                    Add New Level
+                </button>
+            </div>
             <h1 className="text-white text-2xl font-bold mb-4">Levels</h1>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 {levels.map((level) => (
