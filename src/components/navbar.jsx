@@ -23,9 +23,9 @@ export default function NavBar() {
     <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-black/30 border-b border-white/10">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          <Link to="/" className="text-xl font-bold text-white">
+          {/* <Link to="/" className="text-xl font-bold text-white">
             Antariksh
-          </Link>
+          </Link> */}
 
           <div className="flex items-center gap-4">
             {user ? (
