@@ -98,6 +98,12 @@ export default function LevelQuestions() {
 
   const handleDelete = async (questionId) => {
     try {
+      const confirmResult = window.confirm(
+        "Are you sure you want delete this question?"
+      );
+      if (!confirmResult) {
+        return;
+      }
       console.log("Question ID:", questionId);
       const response = await axios.delete(DELETE_QUESTION(questionId), {
         withCredentials: true,
