@@ -26,6 +26,7 @@ export const FETCH_LEVEL_QUESTION_STATS = (levelId) => `${BASE_URL}/admin/level/
 export const FETCH_GAME_STATUS = `${BASE_URL}/admin/fetchGameStatus`;
 export const BLOCK_TEAM = (teamId) => `${BASE_URL}/admin/blockTeam/${teamId}`;
 export const UNBLOCK_TEAM = (teamId) => `${BASE_URL}/admin/unblockTeam/${teamId}`;
+export const UP_TEAM_LEVEL = (teamId) => `${BASE_URL}/admin/upTeamLevel/${teamId}`;
 export const FETCH_ALL_TEAMS = `${BASE_URL}/admin/fetchAllTeams`;
 
 // Join team and create team
