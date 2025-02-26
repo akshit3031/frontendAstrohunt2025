@@ -31,6 +31,7 @@ export const FETCH_ALL_TEAMS = `${BASE_URL}/admin/fetchAllTeams`;
 // Join team and create team
 export const JOIN_TEAM = `${BASE_URL}/player/joinTeam`;
 export const CREATE_TEAM = `${BASE_URL}/player/createTeam`;
+export const LEAVE_TEAM = `${BASE_URL}/player/leaveTeam`;
 export const GET_TEAM_DETAILS = (teamId) => `${BASE_URL}/player/getTeamDetails/${teamId}`;
 
 //General User endpoints
