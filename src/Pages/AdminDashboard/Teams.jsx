@@ -49,19 +49,20 @@ const Teams = () => {
   };
   const handleLevelUpTeam = async (teamId) => {
     try {
-      console.log("Blocking team:", teamId);
       const response = await axios.post(
-        UP_LEVEL_TEAM(teamId),
+        UP_TEAM_LEVEL(teamId),
         {},
         { withCredentials: true }
       );
       if (response.data.success) {
-        alert("Team leveled up  successfully!");
-        // fetchTeams();
+        alert("Team leveled up successfully!");
       }
+    
+      // Optionally refresh the UI to show the new level
+  
     } catch (error) {
-      console.error("Error blocking team:", error);
-      alert("Failed to block team");
+      console.error("Failed to level up team:", error);
+      alert(`Error: ${error.response?.data?.message || "Something went wrong."}`);
     }
   };
   const handleUnblockTeam = async (teamId) => {
