@@ -29,6 +29,7 @@ export default function GamePage() {
   const [leaderboardloading, setleaderboardloading] = useState(true);
   const [leaderboard, setLeaderboard] = useState([]);
   const [leaderboardLoading, setLeaderboardLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
   const fetchLeaderboard = async () => {
@@ -102,7 +103,8 @@ export default function GamePage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+    if (isSubmitting) return; // Prevent multiple clicks
+    setIsSubmitting(true);
     try {
       const response = await axios.post(
         SUBMIT_CODE,
@@ -117,14 +119,15 @@ export default function GamePage() {
 
       if (response.data.success) {
         // Fetch new question after successful submission
-      
+
         alert("Question submitted successfully!");
-         // Clear localStorage when a new question is loaded
-       
+
         await fetchQuestion();
       }
     } catch (err) {
       setError(err.response?.data?.message || "Failed to submit answer");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -241,9 +244,10 @@ export default function GamePage() {
                     />
                     <Button
                       type="submit"
+                      disabled={isSubmitting} 
                       className="bg-gradient-to-r from-purple-600 to-blue-600"
                     >
-                      Submit
+                     {isSubmitting ? "Submitting..." : "Submit"}
                     </Button>
                   </form>
                 )}
