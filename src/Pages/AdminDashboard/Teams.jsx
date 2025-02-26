@@ -49,6 +49,10 @@ const Teams = () => {
   };
   const handleLevelUpTeam = async (teamId) => {
     try {
+      const confirmResult = window.confirm("Are you sure you want to level up this team?");
+      if (!confirmResult) {
+        return;
+      }
       const response = await axios.post(
         UP_TEAM_LEVEL(teamId),
         {},
@@ -67,6 +71,7 @@ const Teams = () => {
   };
   const handleUnblockTeam = async (teamId) => {
     try {
+
       const response = await axios.post(
         UNBLOCK_TEAM(teamId),
         {},
