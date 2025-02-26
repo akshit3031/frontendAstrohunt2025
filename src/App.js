@@ -8,8 +8,6 @@ import AddQuestion from "./components/addQuestion";
 import LevelQuestions from "./Pages/LevelQuestions";
 import ModifyQuestion from "./components/modifyQuestion";
 import OTPVerificationPage from "./Pages/OTPVerificationPage";
-import ForgotPasswordPage from "./Pages/ForgotPasswordPage";
-import SetNewPasswordPage from "./Pages/SetNewPasswordPage";
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute, PublicRoute,AdminProtectedRoute } from './components/ProtectedRoute';
 import TeamSelectionPage from "./Pages/TeamSelectionPage";
@@ -61,8 +59,7 @@ function App() {
           <Route path="/level/:levelNum/questions/:mongoLevelId" element={<LevelQuestions/>}/>
           <Route path="/modifyQuestion/:levelNum/:mongoLevelId" element={<ModifyQuestion/>}/>
           <Route path="/verify-otp" element={<OTPVerificationPage/>}/>
-          <Route path="/setNewPassword" element ={<SetNewPasswordPage/>}/>
-          <Route path="/forgotPassword" element={<ForgotPasswordPage/>}/>
+         
         </Routes>
       </AuthProvider>
     </Router>

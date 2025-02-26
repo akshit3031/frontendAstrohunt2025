@@ -11,9 +11,12 @@ import { Rocket, User, Lock, Mail, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { REGISTER } from "../constants";
+import { Eye, EyeOff } from "lucide-react";
 
 // Dynamically import SpaceBackground using React.lazy
-const SpaceBackground = React.lazy(() => import("../components/space-background"));
+const SpaceBackground = React.lazy(() =>
+  import("../components/space-background")
+);
 
 export default function SignupPage() {
   const [username, setUsername] = useState("");
@@ -24,13 +27,22 @@ export default function SignupPage() {
   const [error, setError] = useState("");
   const [rollNumber, setRollNumber] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+
+  // error states
   const [emailError, setEmailError] = useState("");
+  const [phoneError, setPhoneError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const navigate = useNavigate();
 
   const handleRollNumberChange = (e) => {
     const rollNo = e.target.value;
     setRollNumber(rollNo);
-    setEmail(rollNo+"@nitkkr.ac.in");
+    setEmail(rollNo + "@nitkkr.ac.in");
   };
 
   // Email validation function
@@ -47,6 +59,11 @@ export default function SignupPage() {
   const handleSignup = async (e) => {
     e.preventDefault();
     setError("");
+    setEmailError("");
+    setPhoneError("");
+    setPasswordError("");
+    setConfirmPasswordError("");
+
     setIsLoading(true);
 
     if (!validateEmail(email)) {
@@ -54,12 +71,19 @@ export default function SignupPage() {
       return;
     }
 
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
+    // Password validation
+    if (password.length < 2) {
+      setPasswordError("Password must be at least 2 characters long");
       setIsLoading(false);
       return;
     }
-    
+
+    if (password !== confirmPassword) {
+      setConfirmPasswordError("Passwords do not match");
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const userData = {
         name: username,
@@ -67,21 +91,17 @@ export default function SignupPage() {
         email,
         password,
         rollNo: rollNumber,
-        phoneNo:phoneNumber
+        phoneNo: phoneNumber,
       };
 
-      const response = await axios.post(
-        REGISTER,
-        userData,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          withCredentials: true
-        }
-      );
+      const response = await axios.post(REGISTER, userData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
 
-      if(response.data.otpSent){
+      if (response.data.otpSent) {
         navigate("/verify-otp");
       }
 
@@ -90,9 +110,11 @@ export default function SignupPage() {
       } else {
         setError(response.data.message || "Signup failed");
       }
-
     } catch (err) {
-      setError(err.response?.data?.message || "An error occurred during signup. Please try again.");
+      setError(
+        err.response?.data?.message ||
+          "An error occurred during signup. Please try again."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -104,12 +126,18 @@ export default function SignupPage() {
         <SpaceBackground />
       </Suspense>
       <div className="min-h-screen flex items-center justify-center p-4">
-        <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="w-full max-w-md">
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="w-full max-w-md"
+        >
           <Card className="backdrop-blur-xl bg-black/30 border-white/10 p-8">
             <div className="flex justify-center mb-8">
               <Rocket className="w-12 h-12 text-purple-500" />
             </div>
-            <h1 className="text-3xl font-bold text-center mb-8 text-white">Join Space Quest</h1>
+            <h1 className="text-3xl font-bold text-center mb-8 text-white">
+              Join Space Quest
+            </h1>
             <form onSubmit={handleSignup} className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="username" className="text-white">
@@ -162,6 +190,11 @@ export default function SignupPage() {
                   />
                   <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-purple-400" />
                 </div>
+                {phoneNumber.length > 0 && phoneNumber.length < 10 && (
+                  <p className="text-red-500 text-sm mt-1">
+                    Phone number must be 10 digits
+                  </p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-white">
@@ -174,13 +207,14 @@ export default function SignupPage() {
                     placeholder="commander@nitkkr.ac.in"
                     value={email}
                     disabled
-                    
                     className="bg-white/10 border-white/20 text-white pl-10"
                     required
                   />
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-purple-400" />
                 </div>
-                {emailError && <p className="text-yellow-500 text-sm">{emailError}</p>}
+                {emailError && (
+                  <p className="text-yellow-500 text-sm">{emailError}</p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="password" className="text-white">
@@ -189,14 +223,28 @@ export default function SignupPage() {
                 <div className="relative">
                   <Input
                     id="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="bg-white/10 border-white/20 text-white pl-10"
                     required
                   />
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-purple-400" />
+                  <button
+                    type="button"
+                    className="absolute right-3 top-1/2 -translate-y-1/2"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="w-5 h-5 text-white" />
+                    ) : (
+                      <Eye className="w-5 h-5 text-white" />
+                    )}
+                  </button>
                 </div>
+                {passwordError && (
+                  <p className="text-red-500 text-sm">{passwordError}</p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="confirmPassword" className="text-white">
@@ -205,14 +253,28 @@ export default function SignupPage() {
                 <div className="relative">
                   <Input
                     id="confirmPassword"
-                    type="password"
+                    type={showConfirmPassword ? "text" : "password"}
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     className="bg-white/10 border-white/20 text-white pl-10"
                     required
                   />
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-purple-400" />
+                  <button
+                    type="button"
+                    className="absolute right-3 top-1/2 -translate-y-1/2"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="w-5 h-5 text-white" />
+                    ) : (
+                      <Eye className="w-5 h-5 text-white" />
+                    )}
+                  </button>
                 </div>
+                {confirmPasswordError && (
+                  <p className="text-red-500 text-sm">{confirmPasswordError}</p>
+                )}
               </div>
               {error && <p className="text-red-500 text-sm">{error}</p>}
               <Button
@@ -225,7 +287,10 @@ export default function SignupPage() {
             </form>
             <div className="mt-6 text-center">
               <span className="text-white">Already have an account? </span>
-              <Link to="/login" className="text-purple-400 hover:text-purple-300">
+              <Link
+                to="/login"
+                className="text-purple-400 hover:text-purple-300"
+              >
                 Log in
               </Link>
             </div>
