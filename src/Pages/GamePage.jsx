@@ -102,7 +102,7 @@ export default function GamePage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (localStorage.getItem("submitted")) return;
+  
     try {
       const response = await axios.post(
         SUBMIT_CODE,
@@ -117,12 +117,10 @@ export default function GamePage() {
 
       if (response.data.success) {
         // Fetch new question after successful submission
-        localStorage.setItem("submitted", "true"); // Mark as submitted
+      
         alert("Question submitted successfully!");
          // Clear localStorage when a new question is loaded
-        setTimeout(() => {
-          localStorage.removeItem("submitted");
-        }, 3000);
+       
         await fetchQuestion();
       }
     } catch (err) {
