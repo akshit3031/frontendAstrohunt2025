@@ -1,16 +1,20 @@
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import NavBar from '../components/navbar'; // Adjust the path as needed
-import { Button } from '../components/ui/button'; // Adjust the path as needed
-import { Input } from '../components/ui/input'; // Adjust the path as needed
-import { Card } from '../components/ui/card'; // Adjust the path as needed
-import { Badge } from '../components/ui/badge'; // Adjust the path as needed
-import SpaceBackground from '../components/space-background'; // Adjust the path as needed
-import { useAuth } from '../context/AuthContext';
-import axios from 'axios';
-import { FETCH_CURRENT_QUESTION, SUBMIT_CODE, FETCH_LEADERBOARD } from '../constants.js';
-import { Trophy,ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import NavBar from "../components/navbar"; // Adjust the path as needed
+import { Button } from "../components/ui/button"; // Adjust the path as needed
+import { Input } from "../components/ui/input"; // Adjust the path as needed
+import { Card } from "../components/ui/card"; // Adjust the path as needed
+import { Badge } from "../components/ui/badge"; // Adjust the path as needed
+import SpaceBackground from "../components/space-background"; // Adjust the path as needed
+import { useAuth } from "../context/AuthContext";
+import axios from "axios";
+import {
+  FETCH_CURRENT_QUESTION,
+  SUBMIT_CODE,
+  FETCH_LEADERBOARD,
+} from "../constants.js";
+import { Trophy, ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const SET_TIMER_FOR_REFRESHING_QUESTION = 300000;
 const SET_TIMER_FOR_REFRESHING_LEADERBOARD = 600000;
@@ -20,55 +24,55 @@ export default function GamePage() {
   const { user } = useAuth();
   const [question, setQuestion] = useState(null);
   const [error, setError] = useState(null);
-  const [answer, setAnswer] = useState('');
+  const [answer, setAnswer] = useState("");
   const [questionloading, setquestionLoading] = useState(true);
   const [leaderboardloading, setleaderboardloading] = useState(true);
-  const [leaderboard,setLeaderboard] = useState([]);
+  const [leaderboard, setLeaderboard] = useState([]);
   const [leaderboardLoading, setLeaderboardLoading] = useState(true);
   const navigate = useNavigate();
 
-
-
   const fetchLeaderboard = async () => {
-    try{
+    try {
       console.log("Fetching leaderboard");
       setLeaderboardLoading(true);
       const response = await axios.get(FETCH_LEADERBOARD, {
-        withCredentials: true
+        withCredentials: true,
       });
-      if(response.data.success){
+      if (response.data.success) {
         setLeaderboard(response.data.leaderboard || []);
         console.log("LEADERBOARD: ", response.data.leaderboard);
       }
       setLeaderboardLoading(false);
     } catch (err) {
-      console.error('Error fetching leaderboard:', err);
+      console.error("Error fetching leaderboard:", err);
       setLeaderboard([]);
     } finally {
       setLeaderboardLoading(false);
     }
   };
 
-
   useEffect(() => {
     // Initial fetch of both question and leaderboard
     const fetchInitialData = async () => {
-        await Promise.all([
-            fetchQuestion(),
-            fetchLeaderboard()
-        ]);
+      await Promise.all([fetchQuestion(), fetchLeaderboard()]);
     };
 
     fetchInitialData();
 
     // Set up intervals for both fetches
-    const questionInterval = setInterval(fetchQuestion, SET_TIMER_FOR_REFRESHING_QUESTION);
-    const leaderboardInterval = setInterval(fetchLeaderboard, SET_TIMER_FOR_REFRESHING_LEADERBOARD); // Update leaderboard every minute
+    const questionInterval = setInterval(
+      fetchQuestion,
+      SET_TIMER_FOR_REFRESHING_QUESTION
+    );
+    const leaderboardInterval = setInterval(
+      fetchLeaderboard,
+      SET_TIMER_FOR_REFRESHING_LEADERBOARD
+    ); // Update leaderboard every minute
 
     // Cleanup intervals on component unmount
     return () => {
-        clearInterval(questionInterval);
-        clearInterval(leaderboardInterval);
+      clearInterval(questionInterval);
+      clearInterval(leaderboardInterval);
     };
   }, []);
 
@@ -77,7 +81,7 @@ export default function GamePage() {
       console.log("Fetching question");
       setquestionLoading(true);
       const response = await axios.get(FETCH_CURRENT_QUESTION, {
-        withCredentials: true
+        withCredentials: true,
       });
       console.log("RESPONSE: ", response.data);
       if (response.data.success) {
@@ -85,12 +89,12 @@ export default function GamePage() {
         setQuestion(response.data.currQuestion);
         // Set hints from the question data
         setHints(response.data.currQuestion.hints || []);
-        setAnswer('');
-        setError('');
+        setAnswer("");
+        setError("");
       }
     } catch (err) {
-      console.error('Error fetching question:', err);
-      setError(err.response?.data?.message || 'Failed to fetch question');
+      console.error("Error fetching question:", err);
+      setError(err.response?.data?.message || "Failed to fetch question");
     } finally {
       setquestionLoading(false);
     }
@@ -99,25 +103,28 @@ export default function GamePage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(SUBMIT_CODE, {
-        questionCode: answer,
-        questionId: question._id
-      }, {
-        withCredentials: true
-      });
-
+      const response = await axios.post(
+        SUBMIT_CODE,
+        {
+          questionCode: answer,
+          questionId: question._id,
+        },
+        {
+          withCredentials: true,
+        }
+      );
 
       if (response.data.success) {
         // Fetch new question after successful submission
         await fetchQuestion();
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to submit answer');
+      setError(err.response?.data?.message || "Failed to submit answer");
     }
   };
 
   const handleBack = () => {
-    navigate('/teamDetails');
+    navigate("/teamDetails");
   };
 
   return (
@@ -146,7 +153,10 @@ export default function GamePage() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="text-xl font-bold text-white">{user.name}</div>
-                <Badge variant="outline" className="text-purple-400 border-purple-400">
+                <Badge
+                  variant="outline"
+                  className="text-purple-400 border-purple-400"
+                >
                   Level {question?.level.level}
                 </Badge>
               </div>
@@ -163,53 +173,59 @@ export default function GamePage() {
             ) : (
               <>
                 <div className="space-y-4">
-                  <h2 className="text-xl text-white font-semibold">{question?.title}</h2>
+                  <h2 className="text-xl text-white font-semibold">
+                    {question?.title}
+                  </h2>
                   <p className="text-lg text-white">{question?.description}</p>
                   {question?.image && (
-                    <img src={question.image.url} alt="Question" className="rounded-lg max-w-full" />
+                    <img
+                      src={question.image.url}
+                      alt="Question"
+                      className="rounded-lg max-w-full"
+                    />
                   )}
                 </div>
 
                 {/* Hints Section */}
                 {hints.length > 0 && (
-  <div className="space-y-3">
-    <h3 className="text-lg font-semibold text-white">Hints:</h3>
-    <div className="space-y-2">
-      {hints.map((hint, index) => {
-        // Regex to check if hint.text is a URL
-        const isUrl = /^https?:\/\/[^\s]+$/.test(hint.text);
+                  <div className="space-y-3">
+                    <h3 className="text-lg font-semibold text-white">Hints:</h3>
+                    <div className="space-y-2">
+                      {hints.map((hint, index) => {
+                        // Regex to check if hint.text is a URL
+                        const isUrl = /^https?:\/\/[^\s]+$/.test(hint.text);
 
-        return (
-          <div
-            key={index}
-            className="bg-white/5 p-4 rounded-lg break-words overflow-hidden"
-          >
-            {isUrl ? (
-              <a
-                href={hint.text}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-400 underline break-words"
-              >
-                {`${index + 1}. `}
-                <span className="inline-block max-w-[90%] truncate">
-                  {hint.text}
-                </span>
-              </a>
-            ) : (
-              <p className="text-purple-300 break-words">
-                {`${index + 1}. ${hint.text}`}
-              </p>
-            )}
-          </div>
-        );
-      })}
-    </div>
-  </div>
-)}
+                        return (
+                          <div
+                            key={index}
+                            className="bg-white/5 p-4 rounded-lg break-words overflow-hidden"
+                          >
+                            {isUrl ? (
+                              <a
+                                href={hint.text}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-400 underline break-words"
+                              >
+                                {`${index + 1}. `}
+                                <span className="inline-block max-w-[90%] truncate">
+                                  {hint.text}
+                                </span>
+                              </a>
+                            ) : (
+                              <p className="text-purple-300 break-words">
+                                {`${index + 1}. ${hint.text}`}
+                              </p>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
 
                 {/* Answer Form */}
-                {user.role === 'team_leader' && (
+                {user.role === "team_leader" && (
                   <form onSubmit={handleSubmit} className="flex gap-4">
                     <Input
                       value={answer}
@@ -238,26 +254,36 @@ export default function GamePage() {
             </div>
 
             {leaderboardLoading ? (
-              <div className="text-center text-white py-4">Loading leaderboard...</div>
+              <div className="text-center text-white py-4">
+                Loading leaderboard...
+              </div>
             ) : leaderboard && leaderboard.length > 0 ? (
               <div className="space-y-4">
                 {leaderboard.map((team, index) => (
                   <div
                     key={team._id || index}
                     className={`flex items-center justify-between p-3 rounded-lg ${
-                      index === 0 ? 'bg-yellow-500/20' :
-                      index === 1 ? 'bg-gray-400/20' :
-                      index === 2 ? 'bg-orange-700/20' :
-                      'bg-white/10'
+                      index === 0
+                        ? "bg-yellow-500/20"
+                        : index === 1
+                        ? "bg-gray-400/20"
+                        : index === 2
+                        ? "bg-orange-700/20"
+                        : "bg-white/10"
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <span className={`text-lg font-bold ${
-                        index === 0 ? 'text-yellow-500' :
-                        index === 1 ? 'text-gray-400' :
-                        index === 2 ? 'text-orange-700' :
-                        'text-white'
-                      }`}>
+                      <span
+                        className={`text-lg font-bold ${
+                          index === 0
+                            ? "text-yellow-500"
+                            : index === 1
+                            ? "text-gray-400"
+                            : index === 2
+                            ? "text-orange-700"
+                            : "text-white"
+                        }`}
+                      >
                         #{index + 1}
                       </span>
                       <div>
@@ -271,7 +297,7 @@ export default function GamePage() {
                     </div>
                     <div className="text-right">
                       <p className="text-lg font-bold text-purple-400">
-                        {team.score} pts
+                        {Math.round(team.score)} pts
                       </p>
                     </div>
                   </div>
