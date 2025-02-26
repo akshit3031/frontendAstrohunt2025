@@ -11,6 +11,8 @@ import { Rocket, User, Lock, Mail, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { REGISTER } from "../constants";
+import { Eye, EyeOff } from "lucide-react";
+
 
 // Dynamically import SpaceBackground using React.lazy
 const SpaceBackground = React.lazy(() => import("../components/space-background"));
@@ -25,6 +27,12 @@ export default function SignupPage() {
   const [rollNumber, setRollNumber] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [emailError, setEmailError] = useState("");
+  const [phoneError, setPhoneError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleRollNumberChange = (e) => {
@@ -47,15 +55,24 @@ export default function SignupPage() {
   const handleSignup = async (e) => {
     e.preventDefault();
     setError("");
+    setEmailError("");
+    setPhoneError("");
+    setPasswordError("");
+    setConfirmPasswordError("");
     setIsLoading(true);
 
     if (!validateEmail(email)) {
       setIsLoading(false);
       return;
     }
-
+     // Password validation
+     if (password.length < 2) {
+      setPasswordError("Password must be at least 2 characters long");
+      setIsLoading(false);
+      return;
+    }
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
+      setConfirmPasswordError("Passwords do not match");
       setIsLoading(false);
       return;
     }
@@ -162,6 +179,11 @@ export default function SignupPage() {
                   />
                   <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-purple-400" />
                 </div>
+                {phoneNumber.length > 0 && phoneNumber.length < 10 && (
+                  <p className="text-red-500 text-sm mt-1">
+                    Phone number must be 10 digits
+                  </p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-white">
@@ -189,14 +211,28 @@ export default function SignupPage() {
                 <div className="relative">
                   <Input
                     id="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="bg-white/10 border-white/20 text-white pl-10"
                     required
                   />
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-purple-400" />
+                  <button
+                    type="button"
+                    className="absolute right-3 top-1/2 -translate-y-1/2"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="w-5 h-5 text-white" />
+                    ) : (
+                      <Eye className="w-5 h-5 text-white" />
+                    )}
+                  </button>
                 </div>
+                {passwordError && (
+                  <p className="text-red-500 text-sm">{passwordError}</p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="confirmPassword" className="text-white">
@@ -205,14 +241,28 @@ export default function SignupPage() {
                 <div className="relative">
                   <Input
                     id="confirmPassword"
-                    type="password"
+                    type={showConfirmPassword ? "text" : "password"}
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     className="bg-white/10 border-white/20 text-white pl-10"
                     required
                   />
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-purple-400" />
+                  <button
+                    type="button"
+                    className="absolute right-3 top-1/2 -translate-y-1/2"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="w-5 h-5 text-white" />
+                    ) : (
+                      <Eye className="w-5 h-5 text-white" />
+                    )}
+                  </button>
                 </div>
+                {confirmPasswordError && (
+                  <p className="text-red-500 text-sm">{confirmPasswordError}</p>
+                )}
               </div>
               {error && <p className="text-red-500 text-sm">{error}</p>}
               <Button
