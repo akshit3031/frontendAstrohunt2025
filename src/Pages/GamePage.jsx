@@ -41,7 +41,7 @@ export default function GamePage() {
       });
       if (response.data.success) {
         setLeaderboard(response.data.leaderboard || []);
-        console.log("LEADERBOARD: ", response.data.leaderboard);
+        // console.log("LEADERBOARD: ", response.data.leaderboard);
       }
       setLeaderboardLoading(false);
     } catch (err) {
@@ -84,9 +84,9 @@ export default function GamePage() {
       const response = await axios.get(FETCH_CURRENT_QUESTION, {
         withCredentials: true,
       });
-      console.log("RESPONSE: ", response.data);
+      // console.log("RESPONSE: ", response.data);
       if (response.data.success) {
-        console.log("QUESTION: ", response.data.currQuestion);
+        // console.log("QUESTION: ", response.data.currQuestion);
         setQuestion(response.data.currQuestion);
         // Set hints from the question data
         setHints(response.data.currQuestion.hints || []);
