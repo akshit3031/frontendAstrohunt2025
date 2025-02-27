@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate,useLocation } from "react-router-dom";
+import React, { useState,useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -15,10 +15,15 @@ export default function OTPVerificationPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
     const navigate = useNavigate();
-    const location = useLocation();
-    const email = location.state?.email;
+    const [email, setEmail] = useState("");
     const { user,setUser } = useAuth(); // Get setUser from auth context
 
+    useEffect(() => {
+        const storedEmail = localStorage.getItem("email");
+        if (storedEmail) {
+          setEmail(storedEmail);
+        }
+      }, []);
     const handleVerify = async (e) => {
         e.preventDefault();
         setIsLoading(true);
