@@ -123,6 +123,8 @@ export default function GamePage() {
         alert("Question submitted successfully!");
 
         await fetchQuestion();
+      }else{
+        setError(response?.data?.message || "success false ");
       }
     } catch (err) {
       setError(err.response?.data?.message || "Failed to submit answer");
