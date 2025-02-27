@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useLocation } from "react-router-dom";
 import axios from "axios";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -15,7 +15,8 @@ export default function OTPVerificationPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
     const navigate = useNavigate();
-    
+    const location = useLocation();
+    const email = location.state?.email;
     const { user,setUser } = useAuth(); // Get setUser from auth context
 
     const handleVerify = async (e) => {
@@ -26,7 +27,7 @@ export default function OTPVerificationPage() {
         try {
             const response = await axios.post(
                 VERIFY_OTP,
-                { otp },
+                {email ,otp },
                 {
                     headers: {
                         'Content-Type': 'application/json',

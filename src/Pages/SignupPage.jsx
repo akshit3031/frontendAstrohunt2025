@@ -99,7 +99,7 @@ export default function SignupPage() {
       );
 
       if(response.data.otpSent){
-        navigate("/verify-otp");
+        navigate("/verify-otp",{state:{email}}); // pass email to otp page
       }
 
       if (response.data.success) {
