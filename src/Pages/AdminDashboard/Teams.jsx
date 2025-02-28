@@ -31,9 +31,9 @@ const Teams = () => {
       // Sort teams by the last completed question timestamp (latest first)
       sortedTeams.sort((a, b) => b.lastCompletedQuestionTime - a.lastCompletedQuestionTime);
 
-      setTeams(sortedTeams);
+      setTeams(sortedTeams)
     } catch (error) {
-      console.error("Error fetching teams:", error);
+      console.error("Error fetcng teams:", error);
     } finally {
       setLoading(false);
     }
