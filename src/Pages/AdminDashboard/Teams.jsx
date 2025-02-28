@@ -33,7 +33,7 @@ const Teams = () => {
 
       setTeams(sortedTeams)
     } catch (error) {
-      console.error("Error fetcng teams:", error);
+      console.error("Error teams:", error);
     } finally {
       setLoading(false);
     }
