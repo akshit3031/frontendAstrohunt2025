@@ -4,7 +4,6 @@ import {
   FETCH_ALL_TEAMS,
   BLOCK_TEAM,
   UNBLOCK_TEAM,
-  RELEASE_HINT,
   UP_TEAM_LEVEL,
 } from "../../constants";
 import { Card } from "../../components/ui/card";
@@ -19,17 +18,31 @@ const Teams = () => {
       const response = await axios.get(FETCH_ALL_TEAMS, {
         withCredentials: true,
       });
-      console.log(response.data.allTeams);
-      setTeams(response.data.allTeams);
+
+      let sortedTeams = response.data.allTeams.map((team) => {
+        const totalCompletedQuestions = team.completedQuestions?.length || 0;
+        const lastCompletedQuestionTime = team.completedQuestions?.length
+          ? Math.max(...team.completedQuestions.map((q) => new Date(q.completedAt).getTime()))
+          : 0; // Default to 0 if no completed questions
+
+        return { ...team, totalCompletedQuestions, lastCompletedQuestionTime };
+      });
+
+      // Sort teams by the last completed question timestamp (latest first)
+      sortedTeams.sort((a, b) => b.lastCompletedQuestionTime - a.lastCompletedQuestionTime);
+
+      setTeams(sortedTeams);
     } catch (error) {
       console.error("Error fetching teams:", error);
     } finally {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchTeams();
   }, []);
+
   const handleBlockTeam = async (teamId) => {
     try {
       console.log("Blocking team:", teamId);
@@ -47,6 +60,7 @@ const Teams = () => {
       alert("Failed to block team");
     }
   };
+
   const handleLevelUpTeam = async (teamId) => {
     try {
       const confirmResult = window.confirm("Are you sure you want to level up this team?");
@@ -60,18 +74,16 @@ const Teams = () => {
       );
       if (response.data.success) {
         alert("Team leveled up successfully!");
+        fetchTeams(); // Refresh the UI
       }
-    
-      // Optionally refresh the UI to show the new level
-  
     } catch (error) {
       console.error("Failed to level up team:", error);
       alert(`Error: ${error.response?.data?.message || "Something went wrong."}`);
     }
   };
+
   const handleUnblockTeam = async (teamId) => {
     try {
-
       const response = await axios.post(
         UNBLOCK_TEAM(teamId),
         {},
@@ -86,6 +98,7 @@ const Teams = () => {
       alert("Failed to unblock team");
     }
   };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -108,6 +121,9 @@ const Teams = () => {
               Team Level: {team.currentLevel?.level ?? "null"}
             </p>
             <p className="text-gray-300 mb-2">Score: {team.score}</p>
+            <p className="text-gray-300 mb-2">
+              Completed Questions: {team.totalCompletedQuestions}
+            </p>
 
             {/* Members Section */}
             <div className="mb-4">
@@ -127,7 +143,7 @@ const Teams = () => {
             </div>
 
             {/* Block/Unblock Button */}
-            <div className="flex justify-end">
+            <div className="flex justify-end space-x-2">
               {team.blocked ? (
                 <Button
                   className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md"
@@ -156,4 +172,5 @@ const Teams = () => {
     </div>
   );
 };
+
 export default Teams;
