@@ -43,8 +43,10 @@ export default function OTPVerificationPage() {
             console.log("Response from verifyAndRegister", response.data);
             alert("OTP verified");
             if (response.data.success) {
-                // console.log('///////////////////',user);
-               // Update the auth context with user data
+                // Store token (if returned) and update auth context with user data
+               if (response.data.token) {
+                   localStorage.setItem('token', response.data.token);
+               }
                setUser(response.data.user);
 
               

@@ -3,6 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import {VERIFY_USER,LOGIN,LOGOUT} from "../constants.js"
 
+// Attach Authorization header from localStorage token for all requests
+axios.interceptors.request.use((cfg) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    if (!cfg.headers) cfg.headers = {};
+    cfg.headers.Authorization = `Bearer ${token}`;
+  }
+  return cfg;
+}, (err) => Promise.reject(err));
+
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
@@ -16,14 +26,33 @@ export const AuthProvider = ({ children }) => {
     checkAuth();
   }, []);
 
+  // Helper to detect expired token without calling backend
+  const isTokenExpired = (token) => {
+    if (!token) return true;
+    try {
+      const parts = token.split('.');
+      if (parts.length !== 3) return true;
+      const payload = JSON.parse(atob(parts[1]));
+      if (!payload.exp) return true;
+      const now = Math.floor(Date.now() / 1000);
+      return payload.exp <= now;
+    } catch (e) {
+      return true;
+    }
+  };
+
   const checkAuth = async () => {
     try {
-      console.log("ACCESS TOKEN", document.cookie.accessToken);
-      console.log("REFRESH TOKEN", document.cookie.refreshToken);
-      const response = await axios.get(VERIFY_USER, {
-        withCredentials: true
-      });
-
+      const token = localStorage.getItem('token');
+      if (!token || isTokenExpired(token)) {
+        // token missing or expired — clear and skip verify call to avoid backend jwt expired logs
+        localStorage.removeItem('token');
+        setUser(null);
+        setLoading(false);
+        return;
+      }
+      // Token looks valid locally, verify with backend
+      const response = await axios.get(VERIFY_USER);
       console.log("Response from checkAuth", response.data);
       setUser(response.data.user);
     } catch (error) {
@@ -31,24 +60,31 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-
   };
 
   const login = async (email, password) => {
     const response = await axios.post(
       LOGIN,
-      { email, password },
-      { withCredentials: true }
+      { email, password }
     );
+    console.log(response.data);
+    // Store access token in localStorage
+    if (response.data?.token) {
+      localStorage.setItem('token', response.data.token);
+    }
     setUser(response.data.user);
     return response.data;
   };
 
   const logout = async () => {
     try {
-      await axios.post(LOGOUT, {}, { withCredentials: true });
-      setUser(null);
-      navigate('/login');
+  await axios.post(LOGOUT);
+  // Clear token from localStorage
+  localStorage.removeItem('token');
+  // Clear stored email (used during signup/OTP flow)
+  localStorage.removeItem('email');
+  setUser(null);
+  navigate('/login');
     } catch (error) {
       console.error('Logout error:', error);
     }
@@ -61,4 +97,4 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-export const useAuth = () => useContext(AuthContext); 
+export const useAuth = () => useContext(AuthContext);

@@ -11,6 +11,7 @@ import { Rocket, User, Lock, Mail, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { REGISTER } from "../constants";
+import { useAuth } from "../context/AuthContext";
 import { Eye, EyeOff } from "lucide-react";
 
 
@@ -34,6 +35,7 @@ export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
+  const { setUser } = useAuth();
 
   const handleRollNumberChange = (e) => {
     const rollNo = e.target.value;
@@ -98,12 +100,17 @@ export default function SignupPage() {
         }
       );
 
-      if(response.data.otpSent){
+      if (response.data.otpSent) {
         localStorage.setItem("email", email);
         navigate("/verify-otp"); // pass email to otp page
       }
 
       if (response.data.success) {
+        // If server returned a token on signup, store it and set user in context
+        if (response.data.token) {
+          localStorage.setItem('token', response.data.token);
+          if (response.data.user && setUser) setUser(response.data.user);
+        }
         navigate("/teamSelection");
       } else {
         setError(response.data.message || "Signup failed");

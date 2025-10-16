@@ -39,27 +39,13 @@ export default function LevelQuestions() {
   const fetchQuestions = async () => {
     try {
       console.log("Fetching questions for level:", mongoLevelId);
-      const response = await fetch(GET_ALL_QUESTIONS_BY_LEVEL(mongoLevelId), {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (response.status === 401) {
-        navigate("/login");
+      // Use axios so Authorization header is attached via interceptor
+      const res = await axios.get(GET_ALL_QUESTIONS_BY_LEVEL(mongoLevelId));
+      if (res.status === 401) {
+        navigate('/login');
+        return;
       }
-
-      // console.log(response);
-      // console.log(response.status)
-      // console.log(response.statusText)
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch questions");
-      }
-
-      const data = await response.json();
+      const data = res.data;
 
       if (data && data.questions) {
         const formattedQuestions = data.questions.map((question) => ({

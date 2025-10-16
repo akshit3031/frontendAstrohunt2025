@@ -1,5 +1,6 @@
 const PORT = 4000;
-const BASE_URL = `https://backend-antariksh.vercel.app/api`;
+const BASE_URL = `https://backend-astrohunt2025.vercel.app/api`;
+// const BASE_URL = `http://localhost:${PORT}/api`;
 
 
 //Question
