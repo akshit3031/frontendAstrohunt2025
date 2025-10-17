@@ -1,55 +1,104 @@
-// space-background.js
-
-import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
-
-const MAX_METEORS = 15; // Maximum number of meteors
+// Optimized space-background with CSS-only animations
+import { useMemo } from "react";
 
 export default function SpaceBackground() {
-  // const [mounted, setMounted] = useState(false);
-  // const [meteors, setMeteors] = useState([]);
-  // const [dimensions, setDimensions] = useState({
-  //   width: window.innerWidth,
-  //   height: window.innerHeight,
-  // });
+  // Generate star positions once on mount (memoized)
+  const stars = useMemo(() => {
+    return Array.from({ length: 100 }, (_, i) => ({
+      id: i,
+      left: `${Math.random() * 100}%`,
+      top: `${Math.random() * 100}%`,
+      size: Math.random() * 2 + 0.5, // 0.5px to 2.5px
+      animationDelay: `${Math.random() * 3}s`,
+      animationDuration: `${Math.random() * 3 + 2}s`, // 2s to 5s
+    }));
+  }, []);
 
-  // useEffect(() => {
-  //   setMounted(true);
-
-  //   const handleResize = () => {
-  //     setDimensions({ width: window.innerWidth, height: window.innerHeight });
-  //   };
-
-  //   window.addEventListener("resize", handleResize);
-
-  //   const interval = setInterval(() => {
-  //     setMeteors((prev) => {
-  //       // Remove meteors older than 2 seconds
-  //       const currentTime = Date.now();
-  //       const filteredMeteors = prev.filter(
-  //         (timestamp) => currentTime - timestamp < 2000
-  //       );
-
-  //       // Only add new meteor if we're below the limit
-  //       if (filteredMeteors.length < MAX_METEORS) {
-  //         return [...filteredMeteors, currentTime];
-  //       }
-  //       return filteredMeteors;
-  //     });
-  //   }, 2000);
-
-  //   return () => {
-  //     clearInterval(interval);
-  //     window.removeEventListener("resize", handleResize);
-  //   };
-  // }, []);
-
-  // if (!mounted) {
-  //   return <div className="fixed inset-0 overflow-hidden bg-[#0a0a2e]" />;
-  // }
+  // Generate meteor positions once (memoized)
+  const meteors = useMemo(() => {
+    return Array.from({ length: 5 }, (_, i) => ({
+      id: i,
+      left: `${Math.random() * 100}%`,
+      top: `${Math.random() * 50}%`, // Keep in upper half
+      animationDelay: `${Math.random() * 10}s`,
+      animationDuration: `${Math.random() * 3 + 2}s`, // 2s to 5s
+    }));
+  }, []);
 
   return (
-    <div className="fixed inset-0 overflow-hidden bg-[#0a0a2e]">
-     </div>
+    <div className="fixed inset-0 overflow-hidden bg-gradient-to-b from-[#0a0a2e] to-[#1a1a3e]">
+      {/* Stars layer */}
+      {stars.map((star) => (
+        <div
+          key={star.id}
+          className="absolute rounded-full bg-white star-twinkle"
+          style={{
+            left: star.left,
+            top: star.top,
+            width: `${star.size}px`,
+            height: `${star.size}px`,
+            animationDelay: star.animationDelay,
+            animationDuration: star.animationDuration,
+          }}
+        />
+      ))}
+
+      {/* Meteors layer */}
+      {meteors.map((meteor) => (
+        <div
+          key={meteor.id}
+          className="absolute meteor"
+          style={{
+            left: meteor.left,
+            top: meteor.top,
+            animationDelay: meteor.animationDelay,
+            animationDuration: meteor.animationDuration,
+          }}
+        >
+          <div className="meteor-tail" />
+        </div>
+      ))}
+
+      {/* Add CSS animations in a style tag */}
+      <style jsx>{`
+        @keyframes twinkle {
+          0%, 100% {
+            opacity: 0.2;
+            transform: scale(1);
+          }
+          50% {
+            opacity: 1;
+            transform: scale(1.5);
+          }
+        }
+
+        @keyframes meteor-fall {
+          0% {
+            transform: translateX(0) translateY(0);
+            opacity: 1;
+          }
+          100% {
+            transform: translateX(300px) translateY(300px);
+            opacity: 0;
+          }
+        }
+
+        .star-twinkle {
+          animation: twinkle infinite ease-in-out;
+        }
+
+        .meteor {
+          animation: meteor-fall infinite linear;
+          position: absolute;
+        }
+
+        .meteor-tail {
+          width: 50px;
+          height: 1px;
+          background: linear-gradient(to right, white, transparent);
+          transform: rotate(-45deg);
+        }
+      `}</style>
+    </div>
   );
 }
