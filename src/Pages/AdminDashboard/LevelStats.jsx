@@ -176,7 +176,7 @@ export function LevelStats() {
         </div>
       )}
 
-      {selectedLevel && (
+      {selectedLevelData && (
         <QuestionStats 
           levelId={selectedLevel}
           levelData={selectedLevelData}
