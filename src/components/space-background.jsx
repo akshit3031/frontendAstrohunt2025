@@ -14,17 +14,6 @@ export default function SpaceBackground() {
     }));
   }, []);
 
-  // Generate meteor positions once (memoized)
-  const meteors = useMemo(() => {
-    return Array.from({ length: 5 }, (_, i) => ({
-      id: i,
-      left: `${Math.random() * 100}%`,
-      top: `${Math.random() * 50}%`, // Keep in upper half
-      animationDelay: `${Math.random() * 10}s`,
-      animationDuration: `${Math.random() * 3 + 2}s`, // 2s to 5s
-    }));
-  }, []);
-
   return (
     <div className="fixed inset-0 overflow-hidden bg-gradient-to-b from-[#0a0a2e] to-[#1a1a3e]">
       {/* Stars layer */}
@@ -43,22 +32,6 @@ export default function SpaceBackground() {
         />
       ))}
 
-      {/* Meteors layer */}
-      {meteors.map((meteor) => (
-        <div
-          key={meteor.id}
-          className="absolute meteor"
-          style={{
-            left: meteor.left,
-            top: meteor.top,
-            animationDelay: meteor.animationDelay,
-            animationDuration: meteor.animationDuration,
-          }}
-        >
-          <div className="meteor-tail" />
-        </div>
-      ))}
-
       {/* Add CSS animations in a style tag */}
       <style jsx>{`
         @keyframes twinkle {
@@ -72,31 +45,8 @@ export default function SpaceBackground() {
           }
         }
 
-        @keyframes meteor-fall {
-          0% {
-            transform: translateX(0) translateY(0);
-            opacity: 1;
-          }
-          100% {
-            transform: translateX(300px) translateY(300px);
-            opacity: 0;
-          }
-        }
-
         .star-twinkle {
           animation: twinkle infinite ease-in-out;
-        }
-
-        .meteor {
-          animation: meteor-fall infinite linear;
-          position: absolute;
-        }
-
-        .meteor-tail {
-          width: 50px;
-          height: 1px;
-          background: linear-gradient(to right, white, transparent);
-          transform: rotate(-45deg);
         }
       `}</style>
     </div>
