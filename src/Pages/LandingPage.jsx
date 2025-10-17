@@ -8,7 +8,7 @@ import SpaceBackground from "../components/space-background"; // Adjust the impo
 function LandingPage() {
   return (
     <>
-      {/* <SpaceBackground /> */}
+      <SpaceBackground />
 
       <main className="relative min-h-screen flex flex-col items-center justify-center p-4 text-center">
         <motion.div
