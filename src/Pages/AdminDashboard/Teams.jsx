@@ -120,7 +120,9 @@ const Teams = () => {
             <p className="text-gray-300 mb-2">
               Team Level: {team.currentLevel?.level ?? "null"}
             </p>
-            <p className="text-gray-300 mb-2">Score: {team.score}</p>
+            <p className="text-gray-300 mb-2">
+              Status: {team.hasCompletedAllLevels ? "Finished" : "In Progress"}
+            </p>
             <p className="text-gray-300 mb-2">
               Completed Questions: {team.totalCompletedQuestions}
             </p>

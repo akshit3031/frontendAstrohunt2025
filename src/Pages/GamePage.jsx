@@ -302,14 +302,22 @@ export default function GamePage() {
                           {team.teamName}
                         </p>
                         <p className="text-sm text-gray-400">
-                          Level {team.level}
+                          {team.hasCompletedAllLevels 
+                            ? "Finished" 
+                            : `Level ${team.currentLevel?.level || 'N/A'}`}
                         </p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-lg font-bold text-purple-400">
-                        {Math.round(team.score)} pts
-                      </p>
+                      {team.hasCompletedAllLevels ? (
+                        <Badge className="bg-green-500/20 text-green-400 border-green-400">
+                          ✓ Complete
+                        </Badge>
+                      ) : (
+                        <p className="text-lg font-bold text-purple-400">
+                          Level {team.currentLevel?.level || 'N/A'}
+                        </p>
+                      )}
                     </div>
                   </div>
                 ))}

@@ -4,12 +4,20 @@ import { Card } from '../../components/ui/card';
 import { X } from 'lucide-react';
 import { FETCH_LEVEL_QUESTION_STATS, RELEASE_HINT } from '../../constants';
 
-export default function QuestionStats({ levelId, onClose }) {
+export default function QuestionStats({ levelId, levelData, onClose }) {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  
+  const isCompletionLevel = levelData?.isCompletionLevel;
 
   useEffect(() => {
     const fetchQuestionStats = async () => {
+      // Skip fetching if levelId is null (completion level has no questions)
+      if (!levelId) {
+        setLoading(false);
+        return;
+      }
+      
       try {
         const response = await axios.get(FETCH_LEVEL_QUESTION_STATS(levelId), {
           withCredentials: true
@@ -26,8 +34,12 @@ export default function QuestionStats({ levelId, onClose }) {
     };
 
     fetchQuestionStats();
-    const interval = setInterval(fetchQuestionStats, 30000);
-    return () => clearInterval(interval);
+    
+    // Only set interval if levelId exists
+    if (levelId) {
+      const interval = setInterval(fetchQuestionStats, 30000);
+      return () => clearInterval(interval);
+    }
   }, [levelId]);
 
   const releaseHint = async (questionId, hintId) => {
@@ -61,7 +73,13 @@ export default function QuestionStats({ levelId, onClose }) {
       <Card className="bg-black/80 border-white/10 p-6 w-full max-w-2xl max-h-[80vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-bold text-white">
-            Level {stats?.levelNumber} Questions
+            {isCompletionLevel ? (
+              <span className="flex items-center gap-2">
+                <span className="text-green-400">✓</span> Completed Teams
+              </span>
+            ) : (
+              `Level ${stats?.levelNumber} Questions`
+            )}
           </h2>
           <button 
             onClick={onClose}
@@ -73,7 +91,44 @@ export default function QuestionStats({ levelId, onClose }) {
 
         {loading ? (
           <div className="text-white">Loading...</div>
+        ) : isCompletionLevel ? (
+          // Show completed teams for completion level
+          <div className="space-y-4">
+            <p className="text-green-400 text-lg mb-4">
+              {levelData?.totalTeams || 0} team(s) have completed all levels
+            </p>
+            {levelData?.teamNames && levelData.teamNames.length > 0 ? (
+              <div className="grid grid-cols-1 gap-3">
+                {levelData.teamNames.map((team, index) => (
+                  <div 
+                    key={team.teamId}
+                    className="bg-green-900/20 border border-green-500/30 p-4 rounded-lg flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl text-yellow-500">
+                        {index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '🏆'}
+                      </span>
+                      <div>
+                        <p className="text-white font-semibold text-lg">
+                          {team.teamName}
+                        </p>
+                        <p className="text-green-400 text-sm">
+                          Rank #{index + 1}
+                        </p>
+                      </div>
+                    </div>
+                    <span className="text-green-400 font-bold">✓ Complete</span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-gray-400 text-center py-8">
+                No teams have completed all levels yet
+              </div>
+            )}
+          </div>
         ) : (
+          // Show questions for regular levels
           <div className="space-y-4">
             {stats?.questionStats.map((question) => (
               <div 

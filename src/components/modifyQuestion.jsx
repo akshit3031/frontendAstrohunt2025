@@ -84,7 +84,7 @@ const ModifyQuestion = () => {
   return (
     <div className="relative min-h-screen">
       <div className="absolute inset-0">
-        <SpaceBackground />
+        {/* <SpaceBackground /> */}
       </div>
       <div className="relative z-10 min-h-screen flex items-center justify-center px-4">
         <form

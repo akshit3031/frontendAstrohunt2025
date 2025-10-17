@@ -56,7 +56,7 @@ export default function AddQuestion() {
 
   return (
     <div>
-      <SpaceBackground />
+      {/* <SpaceBackground /> */}
       <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 md:p-8">
         <form
           onSubmit={handleSubmit}

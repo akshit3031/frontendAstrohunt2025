@@ -8,6 +8,7 @@ export function LevelStats() {
   const [levelStats, setLevelStats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedLevel, setSelectedLevel] = useState(null);
+  const [selectedLevelData, setSelectedLevelData] = useState(null);
   const [leaderboard, setLeaderboard] = useState([]);
   const [leaderboardLoading, setLeaderboardLoading] = useState(true);
 
@@ -109,14 +110,22 @@ export function LevelStats() {
                           {team.teamName}
                         </p>
                         <p className="text-sm text-gray-400">
-                          Level {team.level}
+                          {team.hasCompletedAllLevels 
+                            ? "Finished" 
+                            : `Level ${team.currentLevel?.level || team.level || 'N/A'}`}
                         </p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-lg font-bold text-purple-400">
-                        {team.score} pts
-                      </p>
+                      {team.hasCompletedAllLevels ? (
+                        <span className="text-green-400 font-bold">
+                          ✓ Complete
+                        </span>
+                      ) : (
+                        <p className="text-lg font-bold text-purple-400">
+                          Level {team.currentLevel?.level || team.level || 'N/A'}
+                        </p>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -132,20 +141,35 @@ export function LevelStats() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {levelStats.map((level) => (
             <Card 
-              key={level.levelId}
-              className="bg-black/30 border-white/10 p-6 hover:bg-black/40 transition-colors cursor-pointer"
-              onClick={() => setSelectedLevel(level.levelId)}
+              key={level.levelId || `completion-${level.levelNumber}`}
+              className={`${
+                level.isCompletionLevel 
+                  ? 'bg-green-900/30 border-green-500/30' 
+                  : 'bg-black/30 border-white/10'
+              } p-6 hover:bg-black/40 transition-colors cursor-pointer`}
+              onClick={() => {
+                setSelectedLevel(level.levelId);
+                setSelectedLevelData(level);
+              }}
             >
               <h3 className="text-xl font-bold text-white mb-4">
-                Level {level.levelNumber}
+                {level.isCompletionLevel ? (
+                  <span className="flex items-center gap-2">
+                    <span className="text-green-400">✓</span> Finished
+                  </span>
+                ) : (
+                  `Level ${level.levelNumber}`
+                )}
               </h3>
               <div className="space-y-2">
-                <p className="text-purple-400">
-                  Teams in this level: {level.totalTeams}
+                <p className={level.isCompletionLevel ? "text-green-400" : "text-purple-400"}>
+                  Teams {level.isCompletionLevel ? 'completed' : 'in this level'}: {level.totalTeams}
                 </p>
-                <p className="text-gray-400">
-                  Total questions: {level.totalQuestions}
-                </p>
+                {!level.isCompletionLevel && (
+                  <p className="text-gray-400">
+                    Total questions: {level.totalQuestions}
+                  </p>
+                )}
               </div>
             </Card>
           ))}
@@ -154,8 +178,12 @@ export function LevelStats() {
 
       {selectedLevel && (
         <QuestionStats 
-          levelId={selectedLevel} 
-          onClose={() => setSelectedLevel(null)} 
+          levelId={selectedLevel}
+          levelData={selectedLevelData}
+          onClose={() => {
+            setSelectedLevel(null);
+            setSelectedLevelData(null);
+          }} 
         />
       )}
     </div>
