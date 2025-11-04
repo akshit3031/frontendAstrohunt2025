@@ -68,3 +68,20 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+---
+
+## 🚀 About Astrohunt 2025
+
+**Astrohunt 2025** is a flagship Techspardha event — a gamified **online treasure hunt platform** designed to blend technology, logic, and adventure.  
+Participants progress through a series of questions and location-driven clues by entering correct codes that unlock the next challenge.
+
+### 🌟 Key Highlights
+- Developed a gamified treasure hunt experience with **dynamic clue unlocking** and **team progress tracking**.  
+- Implemented **email-based OTP authentication** for secure team registration and joining.  
+- Built a comprehensive **Admin Dashboard** to manage questions, hints, leaderboards, and monitor live team activity.  
+- Integrated a **hint and dashboard section** to assist users strategically without revealing direct answers.  
+- The event successfully attracted **300+ participants**, fostering collaboration, problem-solving, and a healthy competitive spirit.
+
+---
+
